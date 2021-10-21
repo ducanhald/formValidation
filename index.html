@@ -21,7 +21,7 @@
             id="fullname"
             name="fullname"
             type="text"
-            placeholder="VD: Sơn Đặng"
+            placeholder="VD: Đức Ánh"
             class="form-control"
           />
           <span class="form-message"></span>
@@ -69,5 +69,13 @@
       </form>
     </div>
     <script src="index.js"></script>
+    <script>
+      //
+      Validator({
+        form: "#form-1",
+        errorSelector: ".form-message",
+        rules: [Validator.isRequired("#fullname"), Validator.isEmail("#email")],
+      });
+    </script>
   </body>
 </html>
