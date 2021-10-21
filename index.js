@@ -1,4 +1,4 @@
-// 'Validator' object
+// 'Validator' object contructor
 function Validator(options) {
   // function thực hiện validate
   function validate(inputElement, rule) {
@@ -36,25 +36,41 @@ function Validator(options) {
 }
 
 // Define rules
-Validator.isRequired = function (selector) {
+Validator.isRequired = function (selector, message) {
   return {
     selector: selector,
     test: function (value) {
-      if (value.trim()) {
-        return null;
-      } else {
-        return "Vui lòng nhập thông tin này";
-      }
+      return value.trim() ? null : message || "Vui lòng nhập tên đăng nhập";
     },
   };
 };
 
-Validator.isEmail = function (selector) {
+Validator.isEmail = function (selector, message) {
   return {
     selector: selector,
     test: function (value) {
       var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-      return regex.test(value) ? null : "Vui lòng nhập đúng email";
+      return regex.test(value) ? null : message || "Vui lòng nhập đúng email";
+    },
+  };
+};
+Validator.minLenght = function (selector, min, message) {
+  return {
+    selector: selector,
+    test: function (value) {
+      return value.length >= min
+        ? message || null
+        : `Vui lòng nhập hơn ${min} kí tự`;
+    },
+  };
+};
+Validator.isConfirmed = function (selector, getConfirmValue, message) {
+  return {
+    selector: selector,
+    test: function (value) {
+      return value == getConfirmValue()
+        ? null
+        : message || "Vui lòng nhập đúng pass";
     },
   };
 };
