@@ -1,11 +1,21 @@
 // 'Validator' object contructor
 function Validator(options) {
+  var selectorRules = {};
+
   // function thực hiện validate
   function validate(inputElement, rule) {
     var errorElement = inputElement.parentElement.querySelector(
       options.errorSelector
     );
-    var errorMessage = rule.test(inputElement.value);
+    var errorMessage;
+    // Lấy ra tất cả các rule của selector
+    var rules = selectorRules[rule.selector];
+    // lặp qua từng rule và kiểm tra
+    // nếu có lỗi dừng việc kiểm tra
+    for (var i = 0; i < rules.length; i++) {
+      errorMessage = rules[i](inputElement.value);
+      if (errorMessage) break;
+    }
     errorElement.innerHTML = errorMessage;
     if (errorMessage) {
       inputElement.parentElement.classList.add("invalid");
@@ -16,7 +26,25 @@ function Validator(options) {
   //   get element of form need validate
   var formElement = document.querySelector(options.form);
   if (formElement) {
+    // lắng nghe onsubmit
+    // formElement.onsubmit = function (e) {
+    //   e.preventDefault();
+    //   //   Lặp qua từng rule và validate
+    //   options.rules.forEach((rule) => {
+    //     var inputElement = formElement.querySelector(rule.selector);
+    //     validate(inputElement, rule);
+    //   });
+    // };
+    // Lặp qua các rule và lắng nghe sự kiện(blur, input,..)
     options.rules.forEach((rule) => {
+      //Lưu lại các rules cho mỗi input
+
+      if (Array.isArray(selectorRules[rule.selector])) {
+        selectorRules[rule.selector].push(rule.test);
+      } else {
+        selectorRules[rule.selector] = [rule.test];
+      }
+
       var inputElement = formElement.querySelector(rule.selector);
 
       if (inputElement) {
